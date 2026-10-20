@@ -169,10 +169,19 @@ strong { font-weight: 600; color: var(--fg); }
 .row-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .eyebrow { font-size: var(--step--1); color: var(--faint); font-weight: 500; letter-spacing: 0.02em; }
 .row h3 { font-size: var(--step-1); font-weight: 600; }
-.row h3 a { color: var(--fg); text-decoration: none; }
+.row h3 a { color: var(--accent); text-decoration: none; }
 .row h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 10px; }
 .row:hover h3 a { color: var(--accent); }
 .row p { color: var(--muted); font-size: 0.9375rem; }
+.row:hover h3 a { text-decoration: underline; }
+
+/* 사례 페이지가 있는 제목·썸네일 — 링크 색으로 눌린다는 것을 보여 준다 */
+.tlink { color: var(--accent); text-decoration: none; }
+.tlink::after { content: " →"; font-weight: 400; }
+.tlink:hover { text-decoration: underline; }
+a.row-thumb, a.thumb { display: block; transition: border-color 0.15s ease, opacity 0.15s ease; }
+a.row-thumb:hover, a.thumb:hover { border-color: var(--accent); opacity: 0.9; }
+@media (prefers-reduced-motion: reduce) { a.row-thumb, a.thumb { transition: none; } }
 .go { font-size: var(--step--1); font-weight: 600; color: var(--accent); }
 .go::after { content: " →"; }
 
