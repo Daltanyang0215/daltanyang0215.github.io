@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PSY 기술 실험 · 이정현</title>
+<meta name="description" content="미완성 개인 프로젝트 PSY에서 만든 입력·출력 연결 허브 구조">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .dg-box { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
+  .dg-hub { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+  .dg-line { stroke: var(--faint); stroke-width: 1.5; fill: none; }
+  .dg-text { fill: var(--fg); font-family: var(--font-body); font-size: 14px; }
+  .dg-sub { fill: var(--muted); font-family: var(--font-body); font-size: 12px; }
+  .dg-cap { fill: var(--faint); font-family: var(--font-body); font-size: 12px; font-weight: 600; }
+  .dg-mono { fill: var(--accent); font-family: var(--font-mono); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <main class="page">
+
+    <a class="back" href="index.html">포트폴리오로</a>
+
+    <header class="page-head">
+      <span class="eyebrow">개인 프로젝트 · 2023.08 – 2023.09</span>
+      <h1>PSY</h1>
+      <p class="exp-label">미완성 · 기술 실험</p>
+      <p class="meta">염력 2D 액션 · PC · 비공개</p>
+      <p class="desc">염력으로 물체와 적을 잡고 던지는 2D 액션을 시험하던 프로젝트입니다. 게임으로 마무리하지는 못했고, 이 페이지는 그 안에서 만든 상호작용 구조만 다룹니다.</p>
+    </header>
+
+    <article class="case" id="hub" aria-labelledby="t-hub">
+      <div class="case-head">
+        <span class="eyebrow">사례</span>
+        <h2 id="t-hub">입력과 출력을 허브 한 곳에서 잇기</h2>
+      </div>
+
+      <figure class="diagram" aria-label="입력, 허브, 출력의 연결 구조">
+        <svg viewBox="0 0 720 250" role="img" aria-labelledby="dg-title">
+          <title id="dg-title">버튼 A, 버튼 B, 적 처치가 허브의 링크 데이터로 모이고, 허브가 문 열기, 발판 이동, 카메라 연출을 실행한다</title>
+          <text class="dg-cap" x="20" y="22">입력 (FieldEventTrigger)</text>
+          <text class="dg-cap" x="540" y="22">출력 (FieldEventExecution)</text>
+
+          <rect class="dg-box" x="20" y="40" width="150" height="44" rx="8"/><text class="dg-text" x="40" y="67">버튼 A</text>
+          <rect class="dg-box" x="20" y="102" width="150" height="44" rx="8"/><text class="dg-text" x="40" y="129">버튼 B</text>
+          <rect class="dg-box" x="20" y="164" width="150" height="44" rx="8"/><text class="dg-text" x="40" y="191">적 처치</text>
+
+          <path class="dg-line" d="M170 62 C 220 62, 220 125, 262 125"/>
+          <path class="dg-line" d="M170 124 L 262 124"/>
+          <path class="dg-line" d="M170 186 C 220 186, 220 125, 262 125"/>
+
+          <rect class="dg-hub" x="262" y="56" width="196" height="138" rx="10"/>
+          <text class="dg-mono" x="280" y="84">FieldEventConnet</text>
+          <text class="dg-sub" x="280" y="110">링크 데이터</text>
+          <text class="dg-sub" x="280" y="130">· 입력 목록 · 출력 목록</text>
+          <text class="dg-sub" x="280" y="150">· 1회성 · 진행도 조건</text>
+          <text class="dg-text" x="280" y="178">입력이 모두 켜지면 실행</text>
+
+          <path class="dg-line" d="M458 125 C 500 125, 500 62, 540 62"/>
+          <path class="dg-line" d="M458 124 L 540 124"/>
+          <path class="dg-line" d="M458 125 C 500 125, 500 186, 540 186"/>
+
+          <rect class="dg-box" x="540" y="40" width="160" height="44" rx="8"/><text class="dg-text" x="560" y="67">문 열기</text>
+          <rect class="dg-box" x="540" y="102" width="160" height="44" rx="8"/><text class="dg-text" x="560" y="129">발판 이동</text>
+          <rect class="dg-box" x="540" y="164" width="160" height="44" rx="8"/><text class="dg-text" x="560" y="191">카메라 연출</text>
+
+          <text class="dg-sub" x="20" y="238">입력과 출력은 서로를 모릅니다. 연결은 허브의 링크 데이터에만 있습니다.</text>
+        </svg>
+      </figure>
+
+      <dl class="steps">
+        <dt>상황</dt>
+        <dd><p>버튼을 누르면 문이 열리고, 버튼을 누르면 발판이 움직이는 것처럼 조작과 결과가 이어지는 장치가 많았습니다. 버튼 여러 개를 모두 눌러야 하나가 동작하는 경우도 있었고, 결과마다 누르는 대상을 모두 검사할 수는 없었습니다.</p></dd>
+
+        <dt>검토한 방법</dt>
+        <dd>
+          <p>입력이 출력을 알게 하거나, 출력이 입력을 알게 하는 방법을 생각했습니다.</p>
+          <ul>
+            <li>입력 하나 → 출력 여럿은 어느 쪽으로도 되지만, 입력 여럿 → 출력 하나는 구성이 맞지 않았습니다.</li>
+            <li>두 방향을 모두 만들면 읽기 어렵고, 서로를 부르다 순환에 빠질 위험이 있었습니다.</li>
+          </ul>
+        </dd>
+
+        <dt>선택과 이유</dt>
+        <dd>
+          <p>입력과 출력 사이에 허브를 두었습니다. 인스펙터에서 링크 데이터를 개수 제한 없이 만들고, 링크마다 입력 목록과 출력 목록을 넣습니다. 입력이 모두 켜지면 출력을 실행하고, 하나라도 꺼지면 취소합니다.</p>
+          <p class="why">출력은 실행·취소 형식만 갖추면 붙기 때문에, 장치 종류가 늘어도 허브를 고치지 않습니다.</p>
+        </dd>
+
+        <dt>결과</dt>
+        <dd>
+          <ul>
+            <li>출력이 이동·타임라인·카메라 연출·시야 제한·횟수 검사로, 입력이 버튼·적 처치로 늘었습니다.</li>
+            <li>퍼즐 몇 개와 특정 구역에 들어서면 보스가 나오는 이벤트를 같은 구조로 만들었습니다.</li>
+            <li>연결은 씬에서 기즈모 선으로 바로 확인합니다.</li>
+          </ul>
+          <p class="why">나중에 이 구조가 중재자(Mediator) 패턴이라는 것을 알게 됐습니다.</p>
+        </dd>
+
+        <dt>한계</dt>
+        <dd>
+          <ul>
+            <li>매 프레임(LateUpdate) 모든 입력의 상태를 확인합니다. 입력이 바뀔 때 알리는 방식으로 바꿀 수 있습니다.</li>
+            <li>순환 검사는 연결이 한곳에 모여 있어 쉬워졌지만, 구현하지는 않았습니다.</li>
+          </ul>
+        </dd>
+      </dl>
+    </article>
+
+    <nav class="page-foot" aria-label="페이지 이동">
+      <a class="back" href="are.html">이전 사례: 아르</a>
+      <a class="go" href="index.html">포트폴리오로</a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

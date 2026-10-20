@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GunRogue 사례 · 이정현</title>
+<meta name="description" content="GunRogue 개발에서 만든 검증 구조: 데미지 계산 분리와 수치 회귀 검사, 성향별 클리어율 시뮬레이션, AI 활용 방식">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }</style>
+</head>
+<body>
+<div class="wrap">
+  <main class="page">
+
+    <a class="back" href="index.html">포트폴리오로</a>
+
+    <header class="page-head">
+      <span class="eyebrow">개인 프로젝트 · 2026.06 – 개발 중</span>
+      <h1>GunRogue <span class="tag">개발 중</span></h1>
+      <p class="meta">총기 모딩 로그라이크 · PC · 1인 개발 · Steam 출시 준비 · <a href="https://daltanyang0215.itch.io/gunrogue" target="_blank" rel="noopener">itch.io 브라우저 버전</a></p>
+      <p class="desc">총기·탄약·악세서리에 모드를 끼워 출력을 키우고, 탄창 하나로 스테이지 목표치를 넘기는 턴제 로그라이크입니다. 혼자 개발하고 있으며, itch.io에 브라우저 버전을 공개했습니다.</p>
+    </header>
+
+    <div class="gallery-wide">
+      <figure>
+        <video src="images/gr_play.webm" controls muted loop playsinline preload="metadata" poster="images/gr1.webp" aria-label="GunRogue 전투 플레이 영상"></video>
+      </figure>
+      <figure><img src="images/gr2.webp" alt="상점 화면. 모드 목록과 탄창 구성" loading="lazy"></figure>
+    </div>
+
+    <section class="videos" aria-label="플레이 영상">
+      <span class="videos-title">플레이 영상 (YouTube)</span>
+      <div class="vrow">
+        <a class="vcard" href="https://youtube.com/shorts/Ic_4eZ9V32s" target="_blank" rel="noopener">
+          <span class="vthumb"><img src="images/yt_Ic_4eZ9V32s.webp" alt="GunRogue 쇼츠 영상 썸네일" loading="lazy"></span>
+          <span class="vcap"><span>GunRogue 쇼츠</span><span>보기 ↗</span></span>
+        </a>
+      </div>
+    </section>
+
+    <p class="jump">이 페이지의 사례 <a class="chip" href="#harness">수치 회귀 검사</a><a class="chip" href="#sim">성향별 클리어율</a><a class="chip" href="#ai">AI 활용</a></p>
+
+    <article class="case" id="harness" aria-labelledby="t-harness">
+      <div class="case-head">
+        <span class="eyebrow">사례 1</span>
+        <h2 id="t-harness">데미지 계산을 분리하고, 수치 회귀 검사로 지키기</h2>
+      </div>
+      <div class="outcome">
+        <span class="big">약 510건</span>
+        <span class="sub">수치를 바꿀 때마다 콘솔에서 자동으로 도는 검사 · 2026년 10월 기준 전부 통과</span>
+      </div>
+      <dl class="steps">
+        <dt>상황</dt>
+        <dd><p>모드가 늘면서 수치 하나를 바꿀 때 다른 조합이 깨지는지 사람이 매번 확인할 수 없게 됐습니다. 데미지 계산이 Unity 안에 있으면 확인할 때마다 에디터를 켜고 플레이해야 해서, 확인 주기가 에디터에 묶였습니다.</p></dd>
+
+        <dt>판단 근거</dt>
+        <dd>
+          <ul>
+            <li>턴제 전투라 플레이어의 조작 실력이 결과에 거의 영향을 주지 않습니다. 계산을 화면과 떼어 놓아도 됩니다.</li>
+            <li>모든 클래스가 MonoBehaviour일 필요는 없고, 순수 계산 클래스는 최적화와 가독성에도 유리합니다.</li>
+            <li>분리하면 UI가 단순한 버튼이어도 기능을 점검할 수 있고, 통계도 플레이 없이 코드로 낼 수 있습니다.</li>
+          </ul>
+        </dd>
+
+        <dt>선택과 이유</dt>
+        <dd>
+          <p>데미지 계산을 UnityEngine에 의존하지 않는 순수 C# 엔진으로 분리하고, 콘솔에서 바로 돌리는 회귀 검사를 만들었습니다.</p>
+          <p class="why">게임·에디터 밸런스 도구·검사가 같은 엔진 코드를 씁니다. 검증 도구가 공식을 따로 구현하다 원본과 어긋나는 일을 막기 위해서입니다.</p>
+        </dd>
+
+        <dt>결과</dt>
+        <dd>
+          <p>검사는 60여 건에서 시작해 약 510건이 됐습니다. 모드가 슬롯 한도에 걸려 아무 표시 없이 장착되지 않던 문제를 플레이 전에 검사 실패로 먼저 발견했습니다. 코드를 바꾼 뒤에는 실패 건수가 아니라 실패 항목 이름을 이전 커밋과 대조해, 새로 깨진 것만 골라냅니다.</p>
+          <div class="bars" role="list" aria-label="검사 영역별 건수">
+            <div class="bar" role="listitem"><span class="bar-label">표적·적 편성</span><span class="bar-track"><span class="bar-fill" style="width:100%"></span></span><span class="bar-val">113</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">탄창 시퀀스·발사 조건</span><span class="bar-track"><span class="bar-fill" style="width:72.6%"></span></span><span class="bar-val">82</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">보스 패시브</span><span class="bar-track"><span class="bar-fill" style="width:57.5%"></span></span><span class="bar-val">65</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">탄피·런 규칙</span><span class="bar-track"><span class="bar-fill" style="width:54.9%"></span></span><span class="bar-val">62</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">빌드·장비·탄약 장착</span><span class="bar-track"><span class="bar-fill" style="width:39.8%"></span></span><span class="bar-val">45</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">데미지 공식·속성</span><span class="bar-track"><span class="bar-fill" style="width:37.2%"></span></span><span class="bar-val">42</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">상태이상</span><span class="bar-track"><span class="bar-fill" style="width:26.5%"></span></span><span class="bar-val">30</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">화면 표시 = 실제 판정</span><span class="bar-track"><span class="bar-fill" style="width:23.9%"></span></span><span class="bar-val">27</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">경제·상점·추첨</span><span class="bar-track"><span class="bar-fill" style="width:23%"></span></span><span class="bar-val">26</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">전투·스테이지 진행</span><span class="bar-track"><span class="bar-fill" style="width:17.7%"></span></span><span class="bar-val">20</span></div>
+          </div>
+        </dd>
+
+        <dt>한계</dt>
+        <dd>
+          <p>회귀 검사가 지키는 것은 "바뀌지 않았음"까지입니다. 밸런스가 지금 어디에 있는지는 따로 잽니다.</p>
+          <ul>
+            <li>모드 조합의 출력 상한을 빔 서치로 재는 콘솔 도구</li>
+            <li>런 단위로 몇 스테이지에서 막히는지 보는 에디터 도구</li>
+            <li>아래 사례 2의 성향별 시뮬레이션</li>
+          </ul>
+        </dd>
+      </dl>
+      <p class="code-link">코드: <a href="https://github.com/Daltanyang0215/unity-portfolio/tree/master/DamageEngine" target="_blank" rel="noopener">unity-portfolio / DamageEngine</a> · <a href="https://github.com/Daltanyang0215/unity-portfolio/tree/master/DamageLabEditor" target="_blank" rel="noopener">DamageLabEditor</a></p>
+    </article>
+
+    <article class="case" id="sim" aria-labelledby="t-sim">
+      <div class="case-head">
+        <span class="eyebrow">사례 2</span>
+        <h2 id="t-sim">클리어가 운인지 판단인지, 시뮬레이션으로 확인하기</h2>
+      </div>
+      <div class="outcome">
+        <span class="big">40.5% → 81.5%</span>
+        <span class="sub">같은 시드에서 '탐욕' 시나리오와 '보스 대비' 시나리오의 클리어율 (당시 측정)</span>
+      </div>
+      <dl class="steps">
+        <dt>상황</dt>
+        <dd><p>기능은 빠르게 늘었지만 밸런스는 직접 플레이로 검증하기에 역부족이었습니다. 혼자 플레이해서는 조합별·성향별 클리어율처럼 많은 판에서 나오는 정보를 알 수 없습니다.</p></dd>
+
+        <dt>확인하려던 것</dt>
+        <dd><p>"결과가 운인가, 판단인가." 같은 조건에서 고르는 방식만 달리했을 때 클리어율이 갈린다면, 판단이 결과를 결정하는 게임이라고 볼 수 있습니다.</p></dd>
+
+        <dt>선택과 이유</dt>
+        <dd>
+          <p>게임과 같은 계산 코드로 런을 반복하는 시뮬레이터를 만들었습니다. 플레이 방식을 나눈 시나리오 10종을 정하고, 시나리오마다 200회씩 돌렸습니다.</p>
+          <ul>
+            <li><strong>탐욕</strong>: 당장 화력이 크게 오르는 모드만 고릅니다.</li>
+            <li><strong>보스 대비</strong>: 다음 보스를 보고 그 보스에 대응하는 모드를 고릅니다.</li>
+          </ul>
+        </dd>
+
+        <dt>결과</dt>
+        <dd>
+          <div class="bars" role="list" aria-label="시나리오별 클리어율">
+            <div class="bar" role="listitem"><span class="bar-label">탐욕</span><span class="bar-track"><span class="bar-fill dim" style="width:40.5%"></span></span><span class="bar-val">40.5%</span></div>
+            <div class="bar" role="listitem"><span class="bar-label">보스 대비</span><span class="bar-track"><span class="bar-fill" style="width:81.5%"></span></span><span class="bar-val">81.5%</span></div>
+          </div>
+          <p>같은 시드에서 고르는 방식만으로 클리어율이 두 배 가까이 갈려, 판단이 클리어를 결정한다는 것을 확인했습니다.</p>
+        </dd>
+
+        <dt>바꾼 것</dt>
+        <dd>
+          <ul>
+            <li>탄약을 줄여 적은 탄으로 진행하는 빌드는 모드 조합을 마친 상태에서도 다른 빌드의 절반 이하 클리어율이라 폐기했습니다.</li>
+            <li>전기 속성 빌드가 32%로 다른 속성 빌드(87.5%)보다 크게 낮아 피해량을 올렸습니다.</li>
+          </ul>
+        </dd>
+
+        <dt>한계</dt>
+        <dd><p>당시 측정한 수치라 지금의 밸런스와는 다릅니다. 시나리오는 제가 정한 선택 규칙이라, 실제 플레이어의 선택과는 다를 수 있습니다.</p></dd>
+      </dl>
+    </article>
+
+    <article class="case" id="ai" aria-labelledby="t-ai">
+      <div class="case-head">
+        <span class="eyebrow">작업 방식</span>
+        <h2 id="t-ai">AI에게 구현을 맡기고, 기준은 밖에 두기</h2>
+      </div>
+      <p class="desc">Claude Code에 구현을 맡기면서, AI가 기억해 주길 기대하지 않고 설계·검수·진행 상태를 문서와 검사로 밖에 두는 방식으로 운용합니다.</p>
+      <ul class="results">
+        <li><strong>설계는 직접</strong>: 인터페이스·데이터 구조·런 상태 분할은 직접 정하고, 내부 구현만 맡깁니다.</li>
+        <li><strong>검수는 검사로</strong>: 맡긴 코드는 사람이 매번 읽는 대신 위의 회귀 검사가 수치로 검수합니다.</li>
+        <li><strong>맥락은 문서로</strong>: 진행 상태와 결정 사항을 작업 로그와 규칙 문서에 남겨 세션이 바뀌어도 맥락을 잇고, 로그가 커지면 지난 기록을 보관 문서로 옮겨 읽는 비용을 관리합니다.</li>
+      </ul>
+    </article>
+
+    <nav class="page-foot" aria-label="페이지 이동">
+      <a class="back" href="merge.html">이전 사례: 머지 광산</a>
+      <a class="go" href="are.html">다음 사례: 아르</a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

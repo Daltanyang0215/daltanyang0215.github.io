@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>아르 사례 · 이정현</title>
+<meta name="description" content="아르(Are)에서 부품·재질 코드 하나로 조합 장비를 표현한 사례">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }</style>
+</head>
+<body>
+<div class="wrap">
+  <main class="page">
+
+    <a class="back" href="index.html">포트폴리오로</a>
+
+    <header class="page-head">
+      <span class="eyebrow">개인 프로젝트 · 2023</span>
+      <h1>아르 (Are)</h1>
+      <p class="meta">제작·탐험 · PC · 데모 공개 · <a href="https://daltanyang0215.itch.io/are" target="_blank" rel="noopener">itch.io</a> · <a href="https://youtu.be/Yv7eT4FdvQ0" target="_blank" rel="noopener">플레이 영상</a></p>
+      <p class="desc">시드로 만든 세계에서 재료를 모아 제작하는 게임으로, 이후 프로젝트로 이어진 기술을 처음 시도했습니다. 시드 기반 지형 생성, 3×3 칸에 재료를 놓는 조합 레시피, 그린 마법진의 모양을 판정하는 입력, 부품·재질 코드로 나눈 장비 데이터를 만들었습니다.</p>
+    </header>
+
+    <div class="gallery-wide">
+      <figure><img src="images/are.webp" alt="아르 타이틀 화면. 모루와 크리스탈"></figure>
+      <div class="gallery-row landscape">
+        <figure><img src="images/are_s4.webp" alt="제작대 화면. 칸에 재료를 놓아 도구를 만든다" loading="lazy"></figure>
+        <figure><img src="images/are_s5.webp" alt="마법진을 그리는 화면" loading="lazy"></figure>
+      </div>
+    </div>
+
+    <section class="videos" aria-label="플레이 영상">
+      <span class="videos-title">플레이 영상 (YouTube)</span>
+      <div class="vrow wide">
+        <a class="vcard" href="https://youtu.be/Yv7eT4FdvQ0" target="_blank" rel="noopener">
+          <span class="vthumb"><img src="images/yt_Yv7eT4FdvQ0.webp" alt="아르 플레이 영상 썸네일" loading="lazy"></span>
+          <span class="vcap"><span>아르 (Are) 플레이 영상</span><span>보기 ↗</span></span>
+        </a>
+      </div>
+    </section>
+
+    <article class="case" id="parts-code" aria-labelledby="t-parts">
+      <div class="case-head">
+        <span class="eyebrow">사례</span>
+        <h2 id="t-parts">수백 가지 조합 장비를 코드 하나로</h2>
+      </div>
+      <div class="outcome">
+        <span class="big">데이터 1개</span>
+        <span class="sub">새 재료를 추가할 때 필요한 작업. 모든 부품·아이콘·3D 모델에 바로 적용</span>
+      </div>
+      <dl class="steps">
+        <dt>상황</dt>
+        <dd><p>장비의 부품 칸마다 재료를 골라 만드는 조합 제작입니다. 칸마다 재료를 고르고 다중 조합까지 되는 구조라, 만들 수 있는 장비가 수백 가지를 넘었습니다.</p></dd>
+
+        <dt>제약</dt>
+        <dd><p>조합마다 아이템 에셋, 아이콘, 3D 모델을 따로 만들 수는 없었습니다.</p></dd>
+
+        <dt>선택과 이유</dt>
+        <dd>
+          <p>장비 하나를 <strong>부품 코드</strong>와 <strong>재질 코드</strong> 두 정수로 표현했습니다. 칸마다 두 자리씩 담고, 나눗셈과 나머지로 꺼내 씁니다.</p>
+          <div class="table-wrap">
+            <table class="codegrid" aria-label="코드 구성 예시">
+              <thead><tr><th scope="col">예시</th><th scope="col">칸 1</th><th scope="col">칸 2</th><th scope="col">칸 3</th><th scope="col">칸 4</th><th scope="col">칸 5</th><th scope="col">저장되는 값</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">부품</th><td>01</td><td>03</td><td>02</td><td>05</td><td>04</td><td>103020504</td></tr>
+                <tr><th scope="row">재질</th><td>02</td><td>02</td><td>01</td><td>03</td><td>01</td><td>202010301</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>그림은 파츠별 리소스를 흰색으로 만들고, 재료별 색과 머티리얼을 입혀 파츠 우선순위대로 겹쳐 그립니다. 2D 아이콘과 3D 모델 모두 같은 방식입니다.</p>
+        </dd>
+
+        <dt>결과</dt>
+        <dd><p>새 재료는 재질 데이터 하나만 추가하면 모든 부품의 아이콘과 3D 모델에 바로 적용됐습니다.</p></dd>
+
+        <dt>한계</dt>
+        <dd>
+          <p>정수 하나에 두 자리씩 담는 방식이라 칸은 5개, 종류는 100개가 상한입니다. 정수 범위 때문에 첫 칸은 21번까지만 들어갑니다.</p>
+          <p class="why">조합을 데이터로 나눠 표현한 경험은 이후 프로젝트의 데이터 주도 설계로 이어졌습니다.</p>
+        </dd>
+      </dl>
+    </article>
+
+    <nav class="page-foot" aria-label="페이지 이동">
+      <a class="back" href="gunrogue.html">이전 사례: GunRogue</a>
+      <a class="go" href="psy.html">다음: 기술 실험 PSY</a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>
